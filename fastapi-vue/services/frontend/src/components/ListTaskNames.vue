@@ -1,6 +1,10 @@
 <template>
   <div>
-    <p>{{ msg }}</p>
+    <select id="select_task_name">
+      <option :value="task_name" v-for="task_name in dict.list_task_names" :key="task_name">
+        {{ task_name }}
+      </option>
+    </select>
   </div>
 </template>
 
@@ -8,17 +12,18 @@
 import axios from 'axios';
 
 export default {
-  name: 'Ping-temp',
+  name: 'task-names',
   data() {
     return {
-      msg: '',
+      dict: {'list_task_names': []},
     };
   },
   methods: {
     getMessage() {
       axios.get('/')
         .then((res) => {
-          this.msg = res.data;
+          this.dict = res.data;
+          console.log(this.dict)
         })
         .catch((error) => {
           console.error(error);
