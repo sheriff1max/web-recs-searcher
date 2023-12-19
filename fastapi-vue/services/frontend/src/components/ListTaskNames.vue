@@ -1,5 +1,6 @@
 <template>
   <div>
+    <p>Выбор задачи:</p>
     <select id="select_task_name">
       <option :value="task_name" v-for="task_name in dict.list_task_names" :key="task_name">
         {{ task_name }}

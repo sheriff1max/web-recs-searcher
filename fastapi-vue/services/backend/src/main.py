@@ -28,13 +28,21 @@ def home():
 
 @app.post('/')
 def predict(params_for_pipeline: ParamsForPipeline):
-    # df_pred = ...
-    # return {
-    #     'text': df_pred.name.values,
-    #     'similarity': df_pred.similarity.values,
-    # }
-    print(params_for_pipeline)
+
     return {
-        'text': ['Iphone 6', 'Iphone 13', 'Iphone 5s', 'Iphone 12'],
-        'similarity': [0.00094, 0.00098, 0.0102, 0.0105],
+        'result': [
+            {'text': 'Iphone 11', 'similarity': 0.55},
+            {'text': 'Iphone 12', 'similarity': 0.74},
+        ]
     }
+
+    df_pred = ...  # pd.DataFrame
+    text_array = df_pred.text.values
+    similarity_array = df_pred.similarity.values
+
+    result_list = []
+    for i in range(len(text_array)):
+        tmp_dict = {'text': text_array[i], 'similarity': similarity_array[i]}
+        result_list.append(tmp_dict)
+
+    return {'result': result_list}
