@@ -1,4 +1,4 @@
-FROM python:3.11-buster
+FROM python:3.11.5-bookworm
 
 RUN mkdir app
 WORKDIR /app
@@ -8,6 +8,6 @@ ENV PYTHONPATH=.
 
 COPY requirements.txt .
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src/ .
