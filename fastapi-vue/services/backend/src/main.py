@@ -20,9 +20,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.PATH_WEIGHTS = os.path.join('src', 'models', 'weights')
-app.MODEL_NAME = 'Города России.pkl'
-app.MODEL = load_pipeline(app.PATH_WEIGHTS, app.MODEL_NAME)
+app.PATH_WEIGHTS = None
+for root, dirs, files in os.walk('./'):
+    for dir in dirs:
+        if 'weights' == dir:
+            app.PATH_WEIGHTS = os.path.join(root, 'weights')
+    if app.PATH_WEIGHTS:
+        break
+
+app.MODELS = {
+    name: load_pipeline(os.path.join(app.PATH_WEIGHTS, name))
+    for name in os.listdir(app.PATH_WEIGHTS)
+}
 
 @app.get('/')
 def home():
@@ -34,18 +43,9 @@ def home():
 @app.post('/')
 def predict(params_for_pipeline: ParamsForPipeline):
 
-    # return {
-    #     'result': [
-    #         {'text': 'Iphone 11', 'similarity': 0.55},
-    #         {'text': 'Iphone 12', 'similarity': 0.74},
-    #     ]
-    # }
-    if params_for_pipeline.task_name == app.MODEL_NAME:
-        pass
-    else:
-        app.MODEL = load_pipeline(app.PATH_WEIGHTS, params_for_pipeline.task_name)
+    model = app.MODELS[params_for_pipeline.task_name]
 
-    df_pred = app.MODEL.search(params_for_pipeline.text, params_for_pipeline.k)  # pd.DataFrame
+    df_pred = model.search(params_for_pipeline.text, params_for_pipeline.k)  # pd.DataFrame
     text_array = df_pred.name.values
     similarity_array = df_pred.similarity.values
 

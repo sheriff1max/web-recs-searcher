@@ -15,10 +15,8 @@
         </div> 
         
         <div class="inputer">
-          <textarea id="text_inputer" required placeholder="Введите текст" rows="5" cols="50"></textarea>
+          <textarea id="text_inputer" required placeholder="Введите текст" rows="5" cols="50" @input="send"></textarea>
         </div>
-
-        <button id="button_inputer" @click="send">Поиск</button>
       </div>
 
       <div class="box_outputer" v-if="check_is_result()">
@@ -111,6 +109,7 @@ export default {
 .box_inputer {
   background: #FFCA86;
   padding-top: 50px;
+  padding-bottom: 30px;
   border-radius: 16px;
 } 
 
