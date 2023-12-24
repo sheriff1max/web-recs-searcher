@@ -1,6 +1,4 @@
-from typing import Optional
 import os
-import pandas as pd
 
 from .schemas import ParamsForPipeline
 from .utils import parse_pipeline_name
@@ -28,13 +26,17 @@ for root, dirs, files in os.walk('./'):
     if app.PATH_WEIGHTS:
         break
 
+print(app.PATH_WEIGHTS)
 app.MODELS = {
     name: load_pipeline(os.path.join(app.PATH_WEIGHTS, name))
     for name in os.listdir(app.PATH_WEIGHTS)
 }
+print('Models loaded!')
+print(app.MODELS)
 
 @app.get('/')
 def home():
+    print(os.listdir(app.PATH_WEIGHTS))
     return {
         'list_task_names': os.listdir(app.PATH_WEIGHTS),
     }
