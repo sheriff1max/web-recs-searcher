@@ -69,4 +69,4 @@ if __name__ == '__main__':
         searcher=searcher_faiss,
         verbose=True,
     )
-    pipeline.save('weights', PIPELINE_NAME)
+    pipeline.save('./src/models/weights', PIPELINE_NAME)

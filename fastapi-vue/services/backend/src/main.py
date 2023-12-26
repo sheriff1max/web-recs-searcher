@@ -1,13 +1,16 @@
 import os
 
 from .schemas import ParamsForPipeline
-from .utils import parse_pipeline_name
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from recs_searcher import load_pipeline
 
+import pathlib
+import platform
+if platform.system() == 'Linux':
+    pathlib.WindowsPath = pathlib.PosixPath
 
 app = FastAPI()
 app.add_middleware(
@@ -25,18 +28,17 @@ for root, dirs, files in os.walk('./'):
             app.PATH_WEIGHTS = os.path.join(root, 'weights')
     if app.PATH_WEIGHTS:
         break
-
 print(app.PATH_WEIGHTS)
+
 app.MODELS = {
     name: load_pipeline(os.path.join(app.PATH_WEIGHTS, name))
     for name in os.listdir(app.PATH_WEIGHTS)
 }
 print('Models loaded!')
-print(app.MODELS)
+
 
 @app.get('/')
 def home():
-    print(os.listdir(app.PATH_WEIGHTS))
     return {
         'list_task_names': os.listdir(app.PATH_WEIGHTS),
     }
