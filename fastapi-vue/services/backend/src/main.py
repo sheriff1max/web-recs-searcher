@@ -12,6 +12,7 @@ import platform
 if platform.system() == 'Linux':
     pathlib.WindowsPath = pathlib.PosixPath
 
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -50,9 +51,8 @@ def predict(params_for_pipeline: ParamsForPipeline):
     model = app.MODELS[params_for_pipeline.task_name]
 
     df_pred = model.search(params_for_pipeline.text, params_for_pipeline.k)  # pd.DataFrame
-    text_array = df_pred.name.values
+    text_array = df_pred.text.values
     similarity_array = df_pred.similarity.values
-
     result_list = []
     for i in range(len(text_array)):
         tmp_dict = {

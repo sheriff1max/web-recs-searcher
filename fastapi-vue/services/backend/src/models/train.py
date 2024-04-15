@@ -1,24 +1,30 @@
+"""
+cd fastapi-vue/services/backend
+python ./src/models/train.py
+"""
+
+
 from recs_searcher import (
-    preprocessing,
-    models,
-    similarity_search,
-    dataset,
-    augmentation,
+    dataset,  # учебные датасеты
+    preprocessing,  # предобработка текста
+    embeddings,  # преобразование текста в эмбеддинги
+    similarity_search,  # быстрые поисковики в пространстве эмбеддингов
+    augmentation,  # аугментация текста для валидации пайплайнов
+    explain,  # интерпретация сходства двух текстов
 )
-from recs_searcher import api
+from recs_searcher import api  # Пайплайн
 
 
 SEED = 1
-PIPELINE_NAME = 'Компьютерные видеоигры'
+PIPELINE_NAME = 'Города России'
 
 
 if __name__ == '__main__':
-    dataset_games = dataset.load_video_games()
-    # dataset_city_russia = dataset.load_city_russia()
-    dataset = dataset_games
+    # tmp_dataset = dataset.load_video_games()
+    tmp_dataset = dataset.load_city_russia()
 
-    SPACY_MODEL_NAME = 'en_core_web_md'
-    # SPACY_MODEL_NAME = 'ru_core_news_md'
+    # SPACY_MODEL_NAME = 'en_core_web_md'
+    SPACY_MODEL_NAME = 'ru_core_news_md'
     preprocessing_list = [
         preprocessing.TextLower(),
         preprocessing.RemovePunct(),
@@ -32,41 +38,44 @@ if __name__ == '__main__':
         # preprocessing.LemmatizeSpacy(spacy_model_name=SPACY_MODEL_NAME),
     ]
 
-    model_fasttext = models.FastTextWrapperModel(
-        min_count=1,
-        vector_size=20,
-        window=2,
-        sg=1,
-        hs=1,
-        epochs=70,
-        min_n=0,
-        seed=SEED,
+    model_count_vectorizer_char = embeddings.CountVectorizerWrapperEmbedding(
+        analyzer='char_wb',
+        ngram_range=(2, 2),
     )
 
-    # LANGUAGE = 'russian'
     # augmentation_transforms_seed_none = [
-    #     augmentation.ChangeSyms(p=0.013, language=LANGUAGE, change_only_alpha=True, seed=None),
-    #     augmentation.DeleteSyms(p=0.013, delete_only_alpha=True, seed=None),
-    #     augmentation.AddSyms(p=0.013, language=LANGUAGE, seed=None),
-    #     augmentation.MultiplySyms(p=0.013, count_multiply=2, multiply_only_alpha=True, seed=None),
-    #     augmentation.SwapSyms(p=0.013, seed=None),
-    #     augmentation.ChangeSyms(p=0.013, language=LANGUAGE, change_only_alpha=True, seed=None),
-    #     augmentation.ChangeSyms(p=0.013, language=LANGUAGE, change_only_alpha=True, seed=None),
+    #     augmentation.CharAugmentation(
+    #         action='insert',
+    #         unit_prob=1.0,
+    #         min_aug=1,
+    #         max_aug=2,
+    #         mult_num=2,
+    #         seed=None,
+    #     ),
+    #     augmentation.CharAugmentation(
+    #         action='delete',
+    #         unit_prob=1.0,
+    #         min_aug=1,
+    #         max_aug=2,
+    #         mult_num=2,
+    #         seed=None,
+    #     ),
     # ]
-    # model_transformer = models.SentenceTransformerWrapperModel(
+    # model_sentence_transformer = embeddings.SentenceTransformerWrapperEmbedding(
     #     augmentation_transform=augmentation_transforms_seed_none,
     #     batch_size=32,
-    #     epochs=3,
+    #     epochs=6,
     #     optimizer_params={'lr': 2e-2},
     # )
 
-    searcher_faiss = similarity_search.FaissSearch
+    # searcher_faiss = similarity_search.FaissSearch
+    searcher_chroma = similarity_search.ChromaDBSearch
 
     pipeline = api.Pipeline(
-        dataset=dataset.target.values,
+        dataset=tmp_dataset.target.values,
         preprocessing=preprocessing_list,
-        model=model_fasttext,
-        searcher=searcher_faiss,
+        model=model_count_vectorizer_char,
+        searcher=searcher_chroma,
         verbose=True,
     )
     pipeline.save('./src/models/weights', PIPELINE_NAME)
