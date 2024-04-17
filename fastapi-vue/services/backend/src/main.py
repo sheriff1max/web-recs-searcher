@@ -41,7 +41,7 @@ print('Models loaded!')
 @app.get('/')
 def home():
     return {
-        'list_task_names': os.listdir(app.PATH_WEIGHTS),
+        'task_names': os.listdir(app.PATH_WEIGHTS),
     }
 
 
@@ -57,7 +57,7 @@ def predict(params_for_pipeline: ParamsForPipeline):
     for i in range(len(text_array)):
         tmp_dict = {
             'text': text_array[i],
-            'similarity': float(similarity_array[i])
+            'similarity': round(similarity_array[i], 3)
         }
         result_list.append(tmp_dict)
     return {'result': result_list}

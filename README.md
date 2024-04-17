@@ -16,5 +16,5 @@ uvicorn src.main:app --reload --host 0.0.0.0 --port 5000
 > Frontend:
 ```
 cd fastapi-vue/services/frontend
-npm run serve
+npm run dev
 ```
