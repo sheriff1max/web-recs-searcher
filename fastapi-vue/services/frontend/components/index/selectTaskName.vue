@@ -14,17 +14,7 @@
   const runtimeConfig = useRuntimeConfig()
   const loading = ref(1)
 
-  const {data, pending} = await useFetch(()=>`${runtimeConfig.public.API_URL}`, {})
-
-  // const tmp = await useFetch(()=>`${runtimeConfig.public.API_URL}`, {
-  //   'method': 'post',
-  //   'body': {
-  //     'task_name': 'Города России.pkl',
-  //     'k': 5,
-  //     'text': 'Красноярс',
-  //   },
-  // })
-  // console.log(tmp)
+  const {data, pending} = await useFetch(`${runtimeConfig.public.API_URL}`, {})
 </script>
 
 

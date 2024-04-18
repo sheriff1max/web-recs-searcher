@@ -16,7 +16,7 @@ if platform.system() == 'Linux':
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -47,12 +47,11 @@ def home():
 
 @app.post('/')
 def predict(params_for_pipeline: ParamsForPipeline):
-
     model = app.MODELS[params_for_pipeline.task_name]
 
     df_pred = model.search(params_for_pipeline.text, params_for_pipeline.k)  # pd.DataFrame
-    text_array = df_pred.text.values
-    similarity_array = df_pred.similarity.values
+    text_array = df_pred.text.values.tolist()
+    similarity_array = df_pred.similarity.values.tolist()
     result_list = []
     for i in range(len(text_array)):
         tmp_dict = {

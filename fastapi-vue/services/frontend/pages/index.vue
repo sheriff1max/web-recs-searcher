@@ -23,20 +23,27 @@
   async function send() {
     const task_name = document.getElementsByName('task_name')[0].getAttribute('default-value')
     const k = document.getElementsByName('k')[0].textContent
+    const text = document.getElementsByName('text')[0].value
     const flag_show_interpret = document
       .getElementsByName('flag_show_interpret')[0]
       .getElementsByTagName('button')[0]
       .getAttribute('aria-checked')
 
-    console.log(k)
-    // const tmp = await useFetch(()=>`${runtimeConfig.public.API_URL}`, {
-    //   'method': 'post',
-    //   'body': {
-    //     'task_name': 'Города России.pkl',
-    //     'k': 5,
-    //     'text': 'Красноярс',
-    //   },
-    // })
+    const body = {
+      'task_name': task_name,
+      'k': k,
+      'text': text,
+    }
+
+    const response = await useFetch(`${runtimeConfig.public.API_URL}`, {
+      'method': 'post',
+      'body': JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": 'application/json',
+      },
+    })
+    console.log(response)
   }
 </script>
 
