@@ -46,7 +46,7 @@ def home():
 
 
 @app.post('/')
-def predict(params_for_pipeline: ParamsForPipeline):
+def predict(params_for_pipeline: ParamsForPipeline, flag_show_interpret: bool = False):
     model = app.MODELS[params_for_pipeline.task_name]
 
     df_pred = model.search(params_for_pipeline.text, params_for_pipeline.k)  # pd.DataFrame
