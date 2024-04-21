@@ -52,11 +52,36 @@ def predict(params_for_pipeline: ParamsForPipeline, flag_show_interpret: bool = 
     df_pred = model.search(params_for_pipeline.text, params_for_pipeline.k)  # pd.DataFrame
     text_array = df_pred.text.values.tolist()
     similarity_array = df_pred.similarity.values.tolist()
-    result_list = []
+    search_result_array = []
     for i in range(len(text_array)):
         tmp_dict = {
             'text': text_array[i],
             'similarity': round(similarity_array[i], 3)
         }
-        result_list.append(tmp_dict)
-    return {'result': result_list}
+        search_result_array.append(tmp_dict)
+    
+    explain_result_array = []
+    if flag_show_interpret:
+        max_n_grams = len(text_array[0].split())
+        if max_n_grams > 3:
+            max_n_grams = 3
+
+        df_pred = model.explain(
+            compared_text=params_for_pipeline.text,
+            original_text=text_array[0],
+            n_grams=(1, max_n_grams),
+            k=params_for_pipeline.k,
+        )
+        text_array = df_pred.text.values.tolist()
+        similarity_array = df_pred.similarity.values.tolist()
+        for i in range(len(text_array)):
+            tmp_dict = {
+                'text': text_array[i],
+                'similarity': round(similarity_array[i], 3)
+            }
+            explain_result_array.append(tmp_dict)
+
+    return {
+        'search_result_array': search_result_array,
+        'explain_result_array': explain_result_array,
+    }

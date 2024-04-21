@@ -19,7 +19,7 @@
 
 
 <template>
-    <Select>
+    <Select :defaultValue='data?.task_names[0]'>
         <SelectTrigger>
           <SelectValue placeholder="Выбор задачи" />
         </SelectTrigger>

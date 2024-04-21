@@ -41,7 +41,7 @@
     </div>
 
 
-    <div class="space-y-24" v-if="check_is_result()">
+    <div class="space-y-24" v-if="check_is_search()">
       <Table>
         <TableCaption>Таблица с результатами поиска</TableCaption>
         <TableHeader>
@@ -59,24 +59,26 @@
       </Table>
 
 
-      <Table>
-        <TableCaption>Таблица с важностью текстовых элементов</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Найденный элемент'</TableHead>
-            <TableHead>Сходство</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell class="max-w-40 break-words">*текст* текст текст текст текст текст текст </TableCell>
-            <TableCell class="max-w-40 break-words">*число* текст текст текст текст текст текст</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
+      <div v-if="check_is_explain()" class="space-y-24">
+        <Table>
+          <TableCaption>Таблица с важностью текстовых элементов</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Найденный элемент</TableHead>
+              <TableHead>Сходство</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow v-for="result in explain_result_array">
+              <TableCell class="max-w-40 break-words">{{ result.text }}</TableCell>
+              <TableCell class="max-w-40 break-words">{{ result.similarity }}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
 
 
-      <p class="max-w-80 break-words">Разукрашенный исходный текст с его самыми важными элементами.</p>
+        <p class="max-w-80 break-words">Разукрашенный исходный текст с его самыми важными элементами.</p>
+      </div>
     </div>
 
 
@@ -90,6 +92,7 @@
     data() {
       return {
         search_result_array: [],
+        explain_result_array: [],
       };
     },
     methods: {
@@ -121,10 +124,15 @@
             "Accept": 'application/json',
           },
         })
-        this.search_result_array = response.result
+        this.search_result_array = response.search_result_array
+        this.explain_result_array = response.explain_result_array
       },
-      check_is_result() {
+      check_is_search() {
         if (this.search_result_array.length != 0) return true;
+        else return false;
+      },
+      check_is_explain() {
+        if (this.explain_result_array.length != 0) return true;
         else return false;
       },
     }

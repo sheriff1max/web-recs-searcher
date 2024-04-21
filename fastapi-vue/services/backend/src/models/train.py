@@ -76,6 +76,7 @@ if __name__ == '__main__':
         preprocessing=preprocessing_list,
         model=model_count_vectorizer_char,
         searcher=searcher_faiss,
+        explainer=explain.DistanceExplain,
         verbose=True,
     )
     pipeline.save('./src/models/weights', PIPELINE_NAME)
