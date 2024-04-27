@@ -68,14 +68,14 @@ if __name__ == '__main__':
     #     optimizer_params={'lr': 2e-2},
     # )
 
-    searcher_faiss = similarity_search.FaissSearch
-    # searcher_chroma = similarity_search.ChromaDBSearch
+    # searcher_faiss = similarity_search.FaissSearch
+    searcher_chroma = similarity_search.ChromaDBSearch
 
     pipeline = api.Pipeline(
         dataset=tmp_dataset.target.values,
         preprocessing=preprocessing_list,
         model=model_count_vectorizer_char,
-        searcher=searcher_faiss,
+        searcher=searcher_chroma,
         explainer=explain.DistanceExplain,
         verbose=True,
     )

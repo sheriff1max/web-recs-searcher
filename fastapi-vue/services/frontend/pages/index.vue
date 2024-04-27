@@ -13,8 +13,9 @@
 
   // import index ui-elements.
   import selectTaskName from '~/components/index/selectTaskName.vue'
-  import checkboxInterpret from '~/components/index/checkboxInterpret.vue'
   import sliderCountResults from '~/components/index/sliderCountResults.vue'
+  import checkboxInterpret from '~/components/index/checkboxInterpret.vue'
+  import selectAnalyzerExplain from '~/components/index/selectAnalyzerExplain.vue'
 
   // requests.
   const loading = ref(1)
@@ -29,10 +30,14 @@
 
       <selectTaskName name="task_name" />
 
-      <checkboxInterpret name="flag_show_interpret" />
-
       <sliderCountResults />
 
+      <checkboxInterpret name="flag_show_interpret" @click="showSelectAnalyzer" />
+
+      <!-- <p id="analyzer" class="hidden">Hello</p> -->
+      <div id="analyzer_div" class="hidden">
+        <selectAnalyzerExplain name="analyzer" />
+      </div>
     </div>
 
 
@@ -104,6 +109,10 @@
           .getElementsByName('flag_show_interpret')[0]
           .getElementsByTagName('button')[0]
           .getAttribute('aria-checked')
+        var analyzer = null;
+        if (flag_show_interpret) {
+          analyzer = document.getElementsByName('analyzer')[0].getAttribute('default-value')
+        }
 
         var body = {
           'task_name': task_name,
@@ -112,6 +121,7 @@
         }
         var query = {
           'flag_show_interpret': flag_show_interpret,
+          'analyzer': analyzer,
         }
 
         const runtimeConfig = useRuntimeConfig()
@@ -134,6 +144,15 @@
       check_is_explain() {
         if (this.explain_result_array.length != 0) return true;
         else return false;
+      },
+      showSelectAnalyzer() {
+        const el = document.getElementById('analyzer_div')
+        if (el.classList.contains('hidden')) {
+          el.classList.remove("hidden")
+        } else {
+          el.classList.add("hidden")
+        }
+        console.log('hidden')
       },
     }
   }

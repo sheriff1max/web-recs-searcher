@@ -46,7 +46,11 @@ def home():
 
 
 @app.post('/')
-def predict(params_for_pipeline: ParamsForPipeline, flag_show_interpret: bool = False):
+def predict(
+    params_for_pipeline: ParamsForPipeline,
+    flag_show_interpret: bool = False,
+    analyzer: str = 'word',
+):
     model = app.MODELS[params_for_pipeline.task_name]
 
     df_pred = model.search(params_for_pipeline.text, params_for_pipeline.k)  # pd.DataFrame
@@ -62,18 +66,22 @@ def predict(params_for_pipeline: ParamsForPipeline, flag_show_interpret: bool = 
     
     explain_result_array = []
     if flag_show_interpret:
-        max_n_grams = len(text_array[0].split())
-        if max_n_grams > 3:
-            max_n_grams = 3
 
-        df_pred = model.explain(
+        # Вычисляем максимальное значения N-граммы.
+        if analyzer == 'word':
+            max_n_grams = len(params_for_pipeline.text.split())
+        else:
+            max_n_grams = max([len(i) for i in params_for_pipeline.text.split()])
+
+        df, indeces_n_grams = model.explain(
             compared_text=params_for_pipeline.text,
             original_text=text_array[0],
             n_grams=(1, max_n_grams),
             k=params_for_pipeline.k,
+            analyzer=analyzer,
         )
-        text_array = df_pred.text.values.tolist()
-        similarity_array = df_pred.similarity.values.tolist()
+        text_array = df.text.values.tolist()
+        similarity_array = df.similarity.values.tolist()
         for i in range(len(text_array)):
             tmp_dict = {
                 'text': text_array[i],
