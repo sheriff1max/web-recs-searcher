@@ -16,12 +16,14 @@ from recs_searcher import api  # Пайплайн
 
 
 SEED = 1
-PIPELINE_NAME = 'Города России'
+PIPELINE_NAME = 'Адреса Красноярск'
 
 
 if __name__ == '__main__':
     # tmp_dataset = dataset.load_video_games()
-    tmp_dataset = dataset.load_city_russia()
+    # tmp_dataset = dataset.load_city_russia()
+    tmp_dataset = dataset.load_address_krasnoyarsk()
+    tmp_dataset.drop_duplicates(inplace=True)
 
     # SPACY_MODEL_NAME = 'en_core_web_md'
     SPACY_MODEL_NAME = 'ru_core_news_md'

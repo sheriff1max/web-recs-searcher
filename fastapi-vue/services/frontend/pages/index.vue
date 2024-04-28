@@ -186,10 +186,16 @@
               }
               // Костыль, который вроде работает.
               if (prev_end_idx == this.indeces_n_grams[cur_idx_indeces_n_grams][1]) {
+                this.indeces_n_grams.splice(cur_idx_indeces_n_grams, 1)
                 cur_idx_indeces_n_grams = null
                 break
               }
             }
+          }
+
+          // Не крашу одну букву, так как в этом смысла нет.
+          if ((cur_idx_indeces_n_grams != null) && (this.indeces_n_grams[cur_idx_indeces_n_grams][1] - i == 1)) {
+            cur_idx_indeces_n_grams = null
           }
 
           // Нечего разукрашивать.
