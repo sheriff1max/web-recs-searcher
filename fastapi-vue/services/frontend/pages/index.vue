@@ -81,8 +81,7 @@
           </TableBody>
         </Table>
 
-
-        <p class="max-w-80 break-words">Разукрашенный исходный текст с его самыми важными элементами.</p>
+        <p class="max-w-80 break-words" id="text_interpret_color"><b>Важные элементы текста при сравнении:</b><br>{{ text }}</p>
       </div>
     </div>
 
@@ -98,6 +97,14 @@
       return {
         search_result_array: [],
         explain_result_array: [],
+        indeces_n_grams: [],
+        text: '',
+        colors_array: [
+          '#f96d6d', '#f9a76d', '#f9c96d',
+          '#f9f36d', '#d5f96d', '#8cf96d',
+          '#6df9b0', '#6df9f6', '#6dbff9',
+          '#d76df9', '#f96ddb', '#ad6df9',
+        ],
       };
     },
     methods: {
@@ -105,6 +112,7 @@
         var task_name = document.getElementsByName('task_name')[0].getAttribute('default-value')
         var k = document.getElementsByName('k')[0].textContent
         var text = document.getElementsByName('text')[0].value
+        this.text = text
         var flag_show_interpret = document
           .getElementsByName('flag_show_interpret')[0]
           .getElementsByTagName('button')[0]
@@ -136,6 +144,8 @@
         })
         this.search_result_array = response.search_result_array
         this.explain_result_array = response.explain_result_array
+        this.indeces_n_grams = response.indeces_n_grams
+        this.change_color_interpret_text()
       },
       check_is_search() {
         if (this.search_result_array.length != 0) return true;
@@ -152,7 +162,62 @@
         } else {
           el.classList.add("hidden")
         }
-        console.log('hidden')
+      },
+      change_color_interpret_text() {
+        var html_text_color = '<b>Важные элементы текста при сравнении:</b><br>'
+        var cur_idx_color = 0
+
+        // Итерируюсь по индексу введённого текста пользователя.
+        for (var i = 0; i < this.text.length; i++) {
+
+          // Находу tuple нужного элемента введённого текста, который
+          // нужно разукрасить.
+          var cur_idx_indeces_n_grams = null
+          if (this.indeces_n_grams.length != 0) {
+            cur_idx_indeces_n_grams = 0
+            // Костыль, который вроде работает.
+            var prev_end_idx = this.indeces_n_grams[cur_idx_indeces_n_grams][1]
+            
+            while ((i < this.indeces_n_grams[cur_idx_indeces_n_grams][0]) || (i > this.indeces_n_grams[cur_idx_indeces_n_grams][1])) {
+              cur_idx_indeces_n_grams += 1
+              if (cur_idx_indeces_n_grams >= this.indeces_n_grams.length) {
+                cur_idx_indeces_n_grams = null
+                break
+              }
+              // Костыль, который вроде работает.
+              if (prev_end_idx == this.indeces_n_grams[cur_idx_indeces_n_grams][1]) {
+                cur_idx_indeces_n_grams = null
+                break
+              }
+            }
+          }
+
+          // Нечего разукрашивать.
+          if (cur_idx_indeces_n_grams == null) {
+            html_text_color += this.text[i]
+          } else {
+
+            // Не входит в диапазон tuple.
+            if (i < this.indeces_n_grams[cur_idx_indeces_n_grams][0]) {
+              html_text_color += this.text[i]
+            // Красим.
+            } else {
+              var tmp_start_idx = i
+              var tmp_end_idx = this.indeces_n_grams[cur_idx_indeces_n_grams][1]
+
+              html_text_color += '<span style="background-color:' + this.colors_array[cur_idx_color] + '">' + this.text.slice(tmp_start_idx, tmp_end_idx) + '</span>'
+
+              this.indeces_n_grams.splice(cur_idx_indeces_n_grams, 1)
+              i = tmp_end_idx - 1  // Для учтения пробелов делаем -1
+
+              cur_idx_color += 1
+              if (cur_idx_color >= this.colors_array.length) {
+                cur_idx_color = 0
+              }
+            }
+          }
+        }
+        document.getElementById("text_interpret_color").innerHTML = html_text_color
       },
     }
   }

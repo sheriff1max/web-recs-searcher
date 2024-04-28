@@ -65,6 +65,7 @@ def predict(
         search_result_array.append(tmp_dict)
     
     explain_result_array = []
+    indeces_n_grams = []
     if flag_show_interpret:
 
         # Вычисляем максимальное значения N-граммы.
@@ -92,4 +93,5 @@ def predict(
     return {
         'search_result_array': search_result_array,
         'explain_result_array': explain_result_array,
+        'indeces_n_grams': indeces_n_grams,
     }
