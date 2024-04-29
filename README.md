@@ -13,7 +13,7 @@
 ## Запуск:
 
 Два способа запуска на выбор:
-1. Docker:
+1. Docker (запускается только backend):
 ```
 cd fastapi-vue
 docker-compose up -d --build
