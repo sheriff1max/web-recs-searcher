@@ -33,6 +33,10 @@ npm run dev
 
 ## Пример работы WEB-страницы
 
+**Дизайн страницы:**
+
 ![Main page](https://github.com/sheriff1max/web-recs-searcher/blob/main/doc/images/example.png)
+
+**Пример работы системы:**
 
 ![A gif of the operation of the web page.](https://github.com/sheriff1max/web-recs-searcher/blob/main/doc/gifs/demo.gif)
